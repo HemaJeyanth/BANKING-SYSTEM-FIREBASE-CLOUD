@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balance Page</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        .navbar {
+            background-color: #0044cc;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .logo {
+            width: 70px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .container {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .left-sidebar {
+            width: 250px;
+            background-color: #fff;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            height: calc(100vh - 50px);
+            overflow-y: auto;
+        }
+
+        .left-sidebar h2 {
+            margin-top: 0;
+            text-transform: uppercase;
+        }
+
+        .left-sidebar ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .left-sidebar ul li {
+            margin: 10px 0;
+        }
+
+        .left-sidebar ul li a {
+            text-decoration: none;
+            color: #0044cc;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .right-content {
+            padding: 20px;
+            width: 100%;
+            background-color: #fff;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+        }
+
+        .balance-section {
+            margin-bottom: 20px;
+        }
+
+        .balance-section h3 {
+            color: #0044cc;
+        }
+
+        .transaction-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .transaction-list li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table-box {
+            margin-top: 30px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-box th, .table-box td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .table-box th {
+            background-color: #f2f2f2;
+        }
+
+        .chart-container {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <img src="D:/cloud bank/IMAGES/LOGO.png" alt="Bank Logo" class="logo">
+        <h1>TVK Bank - Balance</h1>
+    </div>
+
+    <div class="container">
+        <div class="left-sidebar">
+            <h2>Accounts</h2>
+            <ul class="menu">
+                <li><a href="details.html">Customer Details</a></li>
+                <li><a href="cards.html">Cards</a></li>
+                <li><a href="loans.html">Loans</a></li>
+                <li><a href="forex.html">Forex</a></li>
+                <li><a href="insurance.html">Insurance</a></li>
+                <li><a href="fastag.html">Fast Tag</a></li>
+                <li><a href="transaction.html">Transaction</a></li>
+            </ul>
+        </div>
+
+        <div class="right-content">
+            <h2>Your Balance</h2>
+
+            <div class="balance-section">
+                <h3>Current Balance: <span id="balance"></span></h3>
+            </div>
+
+            <h3>Transaction History</h3>
+            <table class="table-box">
+                <thead>
+                    <tr>
+                        <th>Transaction Amount</th>
+                        <th>Card Type</th>
+                        <th>Transaction Date</th>
+                    </tr>
+                </thead>
+                <tbody id="transaction-list">
+                </tbody>
+            </table>
+
+            <div class="chart-container">
+                <canvas id="transactionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9ywQKBysV05PTEo6ugISQkcfD8Nbx4N0",
+            authDomain: "banking-with-cloud.firebaseapp.com",
+            projectId: "banking-with-cloud",
+            storageBucket: "banking-with-cloud.appspot.com",
+            messagingSenderId: "638684226654",
+            appId: "1:638684226654:web:2f0bed7cec3ebd99a5c0cf",
+            measurementId: "G-1RT8QKPF7L",
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const userId = "user_id_here"; 
+
+        db.collection('users').doc(userId).get().then((userDoc) => {
+            if (userDoc.exists) {
+                const balance = userDoc.data().balance || 0;
+                document.getElementById("balance").innerText = balance;
+            }
+        });
+
+        let transactionAmounts = [];
+        let transactionDates = [];
+        
+        db.collection('transactions').where('userId', '==', userId).get()
+        .then((querySnapshot) => {
+            const transactionList = document.getElementById("transaction-list");
+            querySnapshot.forEach((doc) => {
+                const transaction = doc.data();
+                const listItem = document.createElement('tr');
+                listItem.innerHTML = `
+                    <td>${transaction.amount}</td>
+                    <td>${transaction.cardType}</td>
+                    <td>${transaction.timestamp.toDate().toLocaleDateString()}</td>
+                `;
+                transactionList.appendChild(listItem);
+
+                transactionAmounts.push(transaction.amount);
+                transactionDates.push(transaction.timestamp.toDate().toLocaleDateString());
+            });
+
+            const ctx = document.getElementById('transactionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: transactionDates,
+                    datasets: [{
+                        label: 'Transaction Amounts',
+                        data: transactionAmounts,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+
+    </script>
+
+</body>
+</html>

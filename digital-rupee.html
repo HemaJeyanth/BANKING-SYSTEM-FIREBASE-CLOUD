@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking System - Digital Rupee</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .navbar {
+            background-color: #0044cc;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .logo {
+            width: 70px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .container {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .left-sidebar {
+            width: 250px;
+            background-color: #fff;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            height: calc(100vh - 50px);
+            overflow-y: auto;
+        }
+
+        .left-sidebar h2 {
+            margin-top: 0;
+            text-transform: uppercase;
+        }
+
+        .left-sidebar ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .left-sidebar ul li {
+            margin: 10px 0;
+        }
+
+        .left-sidebar ul li a {
+            text-decoration: none;
+            color: #0044cc;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .right-content {
+            padding: 20px;
+            width: 100%;
+            background-color: #fff;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .section {
+            margin-top: 20px;
+        }
+
+        .section h3 {
+            color: #0044cc;
+        }
+
+        .upload-btn {
+            display: block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #0044cc;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .uploaded-image {
+            width: 100%;
+            max-width: 300px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <img src="D:/cloud bank/IMAGES/LOGO.png" alt="Bank Logo" class="logo">
+        <h1>TVK Bank - Digital Rupee</h1>
+    </div>
+
+    <div class="container">
+        <div class="left-sidebar">
+            <h2>Accounts</h2>
+            <ul class="menu">
+                <li><a href="details.html">Customer Details</a></li>
+                <li><a href="cards.html">Cards</a></li>
+                <li><a href="loans.html">loans</a></li>
+                <li><a href="forex.html">Forex</a></li>
+                <li><a href="insurance.html">Insurance</a></li>
+                <li><a href="fastag.html">Fast Tag</a></li>
+                <li><a href="transaction.html">Transaction</a></li>
+                <li><a href="balance.html">Balance</a></li>
+            </ul>
+        </div>
+
+        <div class="right-content">
+            <h2>Digital Rupee Information</h2>
+
+            <div class="section">
+                <h3>Introduction</h3>
+                <img src="D:\cloud bank\IMAGES\introduction.png">
+            </div>
+
+            <div class="section">
+                <h3>Terms and Conditions</h3>
+                <img src="D:\cloud bank\IMAGES\terms&conditions.png">
+            </div>
+
+            <div class="section">
+                <h3>Parameters</h3>
+                <img src="D:\cloud bank\IMAGES\parameters.png">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9ywQKBysV05PTEo6ugISQkcfD8Nbx4N0",
+            authDomain: "banking-with-cloud.firebaseapp.com",
+            projectId: "banking-with-cloud",
+            storageBucket: "banking-with-cloud.appspot.com",
+            messagingSenderId: "638684226654",
+            appId: "1:638684226654:web:2f0bed7cec3ebd99a5c0cf",
+            measurementId: "G-1RT8QKPF7L",
+        };
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        function uploadImage(inputElement, imageElement, path) {
+            inputElement.addEventListener("change", function (e) {
+                const file = e.target.files[0];
+                const storageRef = storage.ref().child(path);
+
+                storageRef.put(file).then(snapshot => {
+                    snapshot.ref.getDownloadURL().then(url => {
+                        imageElement.src = url;
+                    });
+                }).catch(error => {
+                    console.log("Upload failed:", error);
+                });
+            });
+        }
+        const introUpload = document.getElementById("intro-upload");
+        const introImage = document.getElementById("intro-image");
+        const termsUpload = document.getElementById("terms-upload");
+        const termsImage = document.getElementById("terms-image");
+        const parametersUpload = document.getElementById("parameters-upload");
+        const parametersImage = document.getElementById("parameters-image");
+        uploadImage(introUpload, introImage, "digital-rupee/introduction.jpg");
+        uploadImage(termsUpload, termsImage, "digital-rupee/terms.jpg");
+        uploadImage(parametersUpload, parametersImage, "digital-rupee/parameters.jpg");
+    </script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking System - Forex</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .navbar {
+            background-color: #0044cc;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .logo {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+
+        .container {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        .left-sidebar {
+            width: 250px;
+            background-color: #fff;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            height: calc(100vh - 50px);
+            overflow-y: auto;
+        }
+
+        .left-sidebar h2 {
+            margin-top: 0;
+            text-transform: uppercase;
+        }
+
+        .left-sidebar ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .left-sidebar ul li {
+            margin: 10px 0;
+        }
+
+        .left-sidebar ul li a {
+            text-decoration: none;
+            color: #0044cc;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .right-content {
+            padding: 20px;
+            width: 100%;
+            background-color: #fff;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+
+        .right-content .details {
+            font-size: 18px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #0044cc;
+            border-radius: 5px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .right-content .details p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <img src="D:/cloud bank/IMAGES/LOGO.png">
+        <h1>TVK Bank - Forex</h1>
+    </div>
+
+    <div class="container">
+        <div class="left-sidebar">
+            <h2>Accounts</h2>
+            <ul class="menu">
+                <li><a href="details.html">Customer Details</a></li>
+                <li><a href="cards.html">Cards</a></li>
+                <li><a href="loans.html">Loans</a></li>
+                <li><a href="insurance.html">Insurance</a></li>
+                <li><a href="fastag.html">Fast Tag</a></li>
+                <li><a href="digital-rupee.html">Digital Rupee</a></li>
+                <li><a href="transaction.html">Transaction</a></li>
+                <li><a href="balance.html">Balance</a></li>
+            </ul>
+        </div>
+
+        <div class="right-content" id="right-content">
+            <h2>Forex Details</h2>
+            <div class="details">
+                <p><strong>Currency Type:</strong> <span id="currency-type"></span></p>
+                <p><strong>Exchange Rate:</strong> <span id="exchange-rate"></span></p>
+                <p><strong>Amount:</strong> <span id="amount"></span></p>
+                <p><strong>Transaction Date:</strong> <span id="transaction-date"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9ywQKBysV05PTEo6ugISQkcfD8Nbx4N0",
+            authDomain: "banking-with-cloud.firebaseapp.com",
+            projectId: "banking-with-cloud",
+            storageBucket: "banking-with-cloud.appspot.com",
+            messagingSenderId: "638684226654",
+            appId: "1:638684226654:web:2f0bed7cec3ebd99a5c0cf",
+            measurementId: "G-1RT8QKPF7L",
+        };
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        auth.signInAnonymously()
+            .then(() => {
+                console.log("Signed in anonymously");
+                loadForexDetails();
+            })
+            .catch((error) => {
+                console.error("Error signing in anonymously:", error);
+            });
+        function loadForexDetails() {
+            const customerId = 'customer1'; 
+
+            db.collection("forex").doc(customerId).get().then((doc) => {
+                if (doc.exists) {
+                    const forexData = doc.data();
+                    document.getElementById('currency-type').innerText = forexData['Currency Type'];
+                    document.getElementById('exchange-rate').innerText = forexData['Exchange Rate'];
+                    document.getElementById('amount').innerText = forexData['Amount'];
+                    document.getElementById('transaction-date').innerText = forexData['Transaction Date'];
+                } else {
+                    console.log("No such document!");
+                }
+            }).catch((error) => {
+                console.log("Error getting document:", error);
+            });
+        }
+    </script>
+</body>
+</html>

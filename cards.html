@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking System - Cards</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .navbar {
+            background-color: #0044cc;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+        }
+        .navbar .logo {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        .container {
+            display: flex;
+            margin-top: 20px;
+        }
+        .left-sidebar {
+            width: 250px;
+            background-color: #fff;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            height: calc(100vh - 50px);
+            overflow-y: auto;
+        }
+        .left-sidebar h2 {
+            margin-top: 0;
+            text-transform: uppercase;
+        }
+        .left-sidebar ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .left-sidebar ul li {
+            margin: 10px 0;
+        }
+        .left-sidebar ul li a {
+            text-decoration: none;
+            color: #0044cc;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: default; 
+        }
+        .right-content {
+            padding: 20px;
+            width: 100%;
+            background-color: #fff;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .right-content .details {
+            font-size: 18px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #0044cc;
+            border-radius: 5px;
+            margin-top: 10px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <img src="D:/cloud bank/IMAGES/LOGO.png">
+        <h1>TVK Bank - Cards</h1>
+    </div>
+
+    <div class="container">
+        <div class="left-sidebar">
+            <h2>Accounts</h2>
+            <ul class="menu">
+                <li><a href="details.html">CUSTOMER DETAILS</a></li>
+                <li><a href="loans.html">LOANS</a></li>
+                <li><a href="forex.html">FOREX</a></li>
+                <li><a href="insurance.html">INSURANCE</a></li>
+                <li><a href="fastag.html">FAST TAG</a></li>
+                <li><a href="digital-rupee.html">DIGITAL RUPEE</a></li>
+                <li><a href="transaction.html">Transaction</a></li>
+                <li><a href="balance.html">Balance</a></li>
+            </ul>
+        </div>
+
+        <div class="right-content" id="right-content">
+            <h2>Card Details</h2>
+            <div class="details">
+                <p><strong>Card Type:</strong> <span id="card-type"></span></p>
+                <p><strong>Card Number:</strong> <span id="card-number"></span></p>
+                <p><strong>Expiry Date:</strong> <span id="expiry-date"></span></p>
+                <p><strong>IP address:</strong> <span id="IP address"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9ywQKBysV05PTEo6ugISQkcfD8Nbx4N0",
+            authDomain: "banking-with-cloud.firebaseapp.com",
+            projectId: "banking-with-cloud",
+            storageBucket: "banking-with-cloud.appspot.com",
+            messagingSenderId: "638684226654",
+            appId: "1:638684226654:web:2f0bed7cec3ebd99a5c0cf",
+            measurementId: "G-1RT8QKPF7L",
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        auth.signInAnonymously()
+            .then(() => {
+                console.log("Signed in anonymously");
+                loadCardDetails();
+            })
+            .catch((error) => {
+                console.error("Error signing in anonymously:", error);
+            });
+
+        function loadCardDetails() {
+            const customerId = 'customer1'; 
+
+            db.collection("cards").doc(customerId).get().then((doc) => {
+                if (doc.exists) {
+                    const cardData = doc.data();
+                    document.getElementById('card-type').innerText = cardData['Card Type'];
+                    document.getElementById('card-number').innerText = cardData['Card Number'];
+                    document.getElementById('expiry-date').innerText = cardData['Expiry Date'];
+                    document.getElementById('IP-address').innerText = cardData['IP-address'];
+                } else {
+                    console.log("No such document!");
+                }
+            }).catch((error) => {
+                console.log("Error getting document:", error);
+            });
+        }
+    </script>
+</body>
+</html>

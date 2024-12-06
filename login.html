@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVK Bank - Login</title>
+    <style>
+        
+        body, html {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed; 
+        }
+
+        
+        header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background-color: rgba(0, 123, 255, 0.8); 
+            color: rgb(255, 255, 255);
+            font-size: 24px;
+        }
+
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+            color: #ffffff;
+        }
+
+        h2 {
+            font-weight: bold;
+            margin: 20px;
+        }
+
+       
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+            text-align: left;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        label, input {
+            margin: 5px;
+            padding: 8px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        input {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+       
+        .btn-blue {
+            background-color: #007bff;
+            color: rgb(255, 255, 255);
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            width: 50%;
+            max-width: 150px;
+            margin-top: 10px;
+        }
+
+        .btn-blue:hover {
+            background-color: #0057b391;
+        }
+
+        .btn-center {
+            margin-top: 20px;
+            background-color: green;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            width: 50%;
+            max-width: 150px;
+        }
+
+        .btn-center:hover {
+            background-color: darkgreen;
+        }
+    </style>
+</head>
+<body>
+    
+    <header>
+        <div class="logo">
+            <img src="D:/cloud bank/IMAGES/LOGO.png" alt="TVK Bank Logo">
+        </div>
+        <h1>TVK BANK</h1>
+    </header>
+
+    
+    <main>
+        <h2>WELCOME TO TVK BANK</h2>
+        <div class="container">
+            <form id="customerForm">
+                <label for="customerName">Customer Name:</label>
+                <input type="text" id="customerName" name="customerName" required>
+
+                <label for="accountNumber">Account Number:</label>
+                <input type="text" id="accountNumber" name="accountNumber" required>
+
+                <button id="submitBtn" class="btn-blue" type="submit">Submit</button>
+            </form>
+        </div>
+        <button id="signUpBtn" class="btn-center" onclick="window.location.href='signup.html'">Sign Up</button>
+    </main>
+
+    
+    <script type="module">
+       
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+       
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9ywQKBysV05PTEo6ugISQkcfD8Nbx4N0",
+            authDomain: "banking-with-cloud.firebaseapp.com",
+            projectId: "banking-with-cloud",
+            storageBucket: "banking-with-cloud.appspot.com",
+            messagingSenderId: "638684226654",
+            appId: "1:638684226654:web:2f0bed7cec3ebd99a5c0cf",
+            measurementId: "G-1RT8QKPF7L",
+        };
+
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        
+        document.getElementById("customerForm").addEventListener("submit", (event) => {
+            event.preventDefault(); 
+
+            const customerName = document.getElementById("customerName").value;
+            const accountNumber = document.getElementById("accountNumber").value;
+
+            sessionStorage.setItem("customerName", customerName);
+            sessionStorage.setItem("accountNumber", accountNumber);
+            window.location.href = "details.html";
+        });
+    </script>
+</body>
+</html>
